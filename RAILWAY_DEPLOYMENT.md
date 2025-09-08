@@ -16,7 +16,8 @@ This guide will help you deploy Archon to Railway.com for cloud hosting, enablin
 2. Click "New Project"
 3. Choose "Deploy from GitHub repo"
 4. Connect your Archon repository (fork this repo if you haven't already)
-5. IMPORTANT: Railway will now use the `railway.toml` file (not railway.json) for configuration
+5. IMPORTANT: Railway requires a root Dockerfile, so we've included a placeholder Dockerfile at the root level
+6. Railway will use the `railway.toml` file for the actual multi-service configuration (not railway.json)
 
 ### 2. Configure Services
 
