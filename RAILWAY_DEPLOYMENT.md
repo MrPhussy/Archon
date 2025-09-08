@@ -16,14 +16,20 @@ This guide will help you deploy Archon to Railway.com for cloud hosting, enablin
 2. Click "New Project"
 3. Choose "Deploy from GitHub repo"
 4. Connect your Archon repository (fork this repo if you haven't already)
+5. IMPORTANT: When prompted to select a service, choose "Multi-service project" or similar option (Railway should detect the railway.json file automatically)
 
 ### 2. Configure Services
 
-Railway will automatically detect the `railway.json` file and create four services:
-- archon-server
-- archon-mcp
-- archon-agents
-- archon-frontend
+Railway will automatically detect the `railway.json` file and create four services with their specific Dockerfiles:
+- **archon-server**: Uses `python/Dockerfile.server`
+- **archon-mcp**: Uses `python/Dockerfile.mcp`
+- **archon-agents**: Uses `python/Dockerfile.agents`
+- **archon-frontend**: Uses `archon-ui-main/Dockerfile`
+
+If Railway doesn't automatically detect the multi-service setup, you may need to manually create each service:
+1. Click "Add Service" for each component
+2. Select "Deploy from Dockerfile" for each
+3. Specify the correct Dockerfile path for each service as listed above
 
 ### 3. Set Environment Variables
 
