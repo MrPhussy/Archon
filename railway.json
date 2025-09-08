@@ -1,0 +1,95 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "DOCKERFILE"
+  },
+  "services": [
+    {
+      "name": "archon-server",
+      "description": "FastAPI + Socket.IO + Crawling service",
+      "dockerfile": "python/Dockerfile.server",
+      "variables": [
+        "SUPABASE_URL",
+        "SUPABASE_SERVICE_KEY",
+        "OPENAI_API_KEY",
+        "LOGFIRE_TOKEN",
+        "LOG_LEVEL",
+        "ARCHON_SERVER_PORT",
+        "ARCHON_MCP_PORT", 
+        "ARCHON_AGENTS_PORT"
+      ],
+      "ports": [
+        {
+          "port": 8181,
+          "protocol": "tcp"
+        }
+      ]
+    },
+    {
+      "name": "archon-mcp",
+      "description": "MCP Server service",
+      "dockerfile": "python/Dockerfile.mcp",
+      "variables": [
+        "SUPABASE_URL",
+        "SUPABASE_SERVICE_KEY",
+        "LOGFIRE_TOKEN",
+        "LOG_LEVEL",
+        "TRANSPORT",
+        "API_SERVICE_URL",
+        "AGENTS_SERVICE_URL",
+        "ARCHON_MCP_PORT",
+        "ARCHON_SERVER_PORT",
+        "ARCHON_AGENTS_PORT"
+      ],
+      "ports": [
+        {
+          "port": 8051,
+          "protocol": "tcp"
+        }
+      ],
+      "dependencies": [
+        "archon-server",
+        "archon-agents"
+      ]
+    },
+    {
+      "name": "archon-agents",
+      "description": "AI Processing service",
+      "dockerfile": "python/Dockerfile.agents",
+      "variables": [
+        "SUPABASE_URL",
+        "SUPABASE_SERVICE_KEY",
+        "OPENAI_API_KEY",
+        "LOGFIRE_TOKEN",
+        "LOG_LEVEL",
+        "ARCHON_AGENTS_PORT"
+      ],
+      "ports": [
+        {
+          "port": 8052,
+          "protocol": "tcp"
+        }
+      ]
+    },
+    {
+      "name": "archon-frontend",
+      "description": "React UI service",
+      "dockerfile": "archon-ui-main/Dockerfile",
+      "variables": [
+        "VITE_API_URL",
+        "VITE_ARCHON_SERVER_PORT",
+        "ARCHON_SERVER_PORT",
+        "HOST"
+      ],
+      "ports": [
+        {
+          "port": 3737,
+          "protocol": "tcp"
+        }
+      ],
+      "dependencies": [
+        "archon-server"
+      ]
+    }
+  ]
+}
