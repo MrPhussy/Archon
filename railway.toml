@@ -1,0 +1,31 @@
+[build]
+builder = "DOCKERFILE"
+
+[env]
+SUPABASE_URL = "https://evvdxlzmopgraepibkcu.supabase.co"
+SUPABASE_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2dmR4bHptb3BncmFlcGlia2N1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NTg1ODgwNiwiZXhwIjoyMDcxNDM0ODA2fQ.apG_n2jebHA9_NoPL3G6Dptez5PYZnKzvTfsB8AeqW8"
+HOST = "0.0.0.0"
+LOG_LEVEL = "INFO"
+TRANSPORT = "sse"
+
+[service.archon-server]
+build = { dockerfile = "python/Dockerfile.server" }
+environment = { ARCHON_SERVER_PORT = "8181", ARCHON_MCP_PORT = "8051", ARCHON_AGENTS_PORT = "8052" }
+port = 8181
+
+[service.archon-mcp]
+build = { dockerfile = "python/Dockerfile.mcp" }
+environment = { ARCHON_MCP_PORT = "8051", ARCHON_SERVER_PORT = "8181", ARCHON_AGENTS_PORT = "8052", API_SERVICE_URL = "http://archon-server-production.up.railway.app", AGENTS_SERVICE_URL = "http://archon-agents-production.up.railway.app" }
+port = 8051
+depends_on = ["archon-server", "archon-agents"]
+
+[service.archon-agents]
+build = { dockerfile = "python/Dockerfile.agents" }
+environment = { ARCHON_AGENTS_PORT = "8052" }
+port = 8052
+
+[service.archon-frontend]
+build = { dockerfile = "archon-ui-main/Dockerfile" }
+environment = { ARCHON_UI_PORT = "3737", VITE_API_URL = "http://archon-server-production.up.railway.app", VITE_ARCHON_SERVER_PORT = "8181", ARCHON_SERVER_PORT = "8181" }
+port = 3737
+depends_on = ["archon-server"]
