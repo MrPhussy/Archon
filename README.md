@@ -50,6 +50,27 @@ This new vision for Archon replaces the old one (the agenteer). Archon used to b
 - [OpenAI API key](https://platform.openai.com/api-keys) (Gemini and Ollama are supported too!)
 - (OPTIONAL) [Make](https://www.gnu.org/software/make/) (see [Installing Make](#installing-make) below)
 
+## Deployment
+
+Archon can be deployed in multiple ways:
+
+### Local Development
+Follow the [Quick Start](#quick-start) instructions above to run Archon locally using Docker.
+
+### Cloud Deployment
+
+#### Render.com (Recommended)
+For cloud deployment, we recommend using Render.com. Follow these steps:
+1. Create a Render.com account
+2. Review the [Render Deployment Guide](RENDER_DEPLOYMENT.md)
+3. Create four web services using the provided `render.yaml` file
+4. Set up environment variables using the `render.env` file as a template
+5. Deploy and configure your services
+
+#### Railway (Alternative)
+If you prefer Railway, follow the [Railway Deployment Guide](RAILWAY_DEPLOYMENT.md)
+Note: We've updated the railway.toml configuration to fix multi-service deployment issues.
+
 ### Setup Instructions
 
 1. **Clone Repository**:

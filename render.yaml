@@ -1,0 +1,106 @@
+# Render.com declarative configuration for Archon
+
+services:
+  # Archon Server Service
+  - type: web
+    name: archon-server
+    env: docker
+    region: oregon
+    dockerfilePath: python/Dockerfile.server
+    envVars:
+      - key: SUPABASE_URL
+        fromService:
+          type: env
+          name: SUPABASE_URL
+      - key: SUPABASE_SERVICE_KEY
+        fromService:
+          type: env
+          name: SUPABASE_SERVICE_KEY
+      - key: HOST
+        value: 0.0.0.0
+      - key: ARCHON_SERVER_PORT
+        value: 8181
+      - key: ARCHON_MCP_PORT
+        value: 8051
+      - key: ARCHON_AGENTS_PORT
+        value: 8052
+      - key: LOG_LEVEL
+        value: INFO
+    healthCheck:
+      enabled: true
+      path: /health
+
+  # Archon MCP Service
+  - type: web
+    name: archon-mcp
+    env: docker
+    region: oregon
+    dockerfilePath: python/Dockerfile.mcp
+    envVars:
+      - key: SUPABASE_URL
+        fromService:
+          type: env
+          name: SUPABASE_URL
+      - key: SUPABASE_SERVICE_KEY
+        fromService:
+          type: env
+          name: SUPABASE_SERVICE_KEY
+      - key: HOST
+        value: 0.0.0.0
+      - key: ARCHON_MCP_PORT
+        value: 8051
+      - key: ARCHON_SERVER_PORT
+        value: 8181
+      - key: ARCHON_AGENTS_PORT
+        value: 8052
+      - key: TRANSPORT
+        value: sse
+      - key: API_SERVICE_URL
+        value: ${ARCHON_SERVER_URL}
+      - key: AGENTS_SERVICE_URL
+        value: ${ARCHON_AGENTS_URL}
+      - key: LOG_LEVEL
+        value: INFO
+
+  # Archon Agents Service
+  - type: web
+    name: archon-agents
+    env: docker
+    region: oregon
+    dockerfilePath: python/Dockerfile.agents
+    envVars:
+      - key: SUPABASE_URL
+        fromService:
+          type: env
+          name: SUPABASE_URL
+      - key: SUPABASE_SERVICE_KEY
+        fromService:
+          type: env
+          name: SUPABASE_SERVICE_KEY
+      - key: HOST
+        value: 0.0.0.0
+      - key: ARCHON_AGENTS_PORT
+        value: 8052
+      - key: LOG_LEVEL
+        value: INFO
+    healthCheck:
+      enabled: true
+      path: /health
+
+  # Archon Frontend Service
+  - type: web
+    name: archon-frontend
+    env: docker
+    region: oregon
+    dockerfilePath: archon-ui-main/Dockerfile
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: ARCHON_UI_PORT
+        value: 3737
+      - key: VITE_API_URL
+        value: ${ARCHON_SERVER_URL}
+      - key: VITE_ARCHON_SERVER_PORT
+        value: 8181
+      - key: ARCHON_SERVER_PORT
+        value: 8181

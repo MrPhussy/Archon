@@ -1,5 +1,5 @@
 [build]
-builder = "DOCKERFILE"
+builder = "DOCKER"
 
 [env]
 SUPABASE_URL = "https://evvdxlzmopgraepibkcu.supabase.co"
