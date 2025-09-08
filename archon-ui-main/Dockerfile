@@ -1,25 +1,29 @@
-# Simple Vite dev server setup
+# Build Stage
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+# Copy package files and install dependencies
+COPY package*.json ./
+RUN npm ci
+
+# Copy source code and build for production
+COPY . .
+RUN npm run build
+
+# Production Stage
 FROM node:18-alpine
 
 WORKDIR /app
 
-# Install system dependencies needed for some npm packages
-RUN apk add --no-cache python3 make g++ git curl
+# Install 'serve' to serve static files
+RUN npm install -g serve
 
-# Copy package files
-COPY package*.json ./
+# Copy built assets from the builder stage
+COPY --from=builder /app/dist ./dist
 
-# Install dependencies including dev dependencies for testing
-RUN npm ci
+# Expose the port for the static server
+EXPOSE 3000
 
-# Create coverage directory with proper permissions
-RUN mkdir -p /app/coverage && chmod 777 /app/coverage
-
-# Copy source code
-COPY . .
-
-# Expose the port configured in package.json (3737)
-EXPOSE 3737
-
-# Start Vite dev server (already configured with --port 3737 --host in package.json)
-CMD ["npm", "run", "dev"]
+# Command to serve the static files
+CMD ["serve", "-s", "dist", "-l", "3000"]
