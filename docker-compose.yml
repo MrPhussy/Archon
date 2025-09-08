@@ -30,12 +30,7 @@ services:
       - AGENTS_ENABLED=${AGENTS_ENABLED:-false}
     networks:
       - app-network
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock # Docker socket for MCP container control
-      - ./python/src:/app/src # Mount source code for hot reload
-      - ./python/tests:/app/tests # Mount tests for UI test execution
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+     
     command:
       [
         "python",
@@ -92,8 +87,7 @@ services:
       archon-server:
         condition: service_healthy
       
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+     
     healthcheck:
       test:
         [
@@ -165,9 +159,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-    volumes:
-      - ./archon-ui-main/src:/app/src
-      - ./archon-ui-main/public:/app/public
+     
     depends_on:
       archon-server:
         condition: service_healthy
