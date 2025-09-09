@@ -25,12 +25,13 @@ function getCacheKey(endpoint: string, options: RequestInit = {}): string {
 /**
  * ETag-aware API call function
  * Handles 304 Not Modified responses by returning cached data
+ *
+ * IMPORTANT: 'endpoint' MUST BE A FULL, ABSOLUTE URL (e.g., http://localhost:8181/api/health)
  */
 export async function callAPIWithETag<T = unknown>(endpoint: string, options: RequestInit = {}): Promise<T> {
   try {
-    // Clean endpoint
-    const cleanEndpoint = endpoint.startsWith("/api") ? endpoint.substring(4) : endpoint;
-    const fullUrl = `${API_FULL_URL}/api${cleanEndpoint}`; // Corrected to use API_FULL_URL
+    // Assume `endpoint` is already the full, absolute URL. No internal prefixing.
+    const fullUrl = endpoint; // The endpoint is now the full URL
     const cacheKey = getCacheKey(fullUrl, options);
     const method = (options.method || "GET").toUpperCase();
 
@@ -60,18 +61,18 @@ export async function callAPIWithETag<T = unknown>(endpoint: string, options: Re
       if (cachedData) {
         // Console log for debugging
         if (ETAG_DEBUG) {
-          console.log(`%c[ETag] Cache hit (304) for ${cleanEndpoint}`, "color: #10b981; font-weight: bold");
+          console.log(`%c[ETag] Cache hit (304) for ${endpoint}`, "color: #10b981; font-weight: bold");
         }
         return cachedData as T;
       }
       // Cache miss on 304 - this shouldn't happen but handle gracefully
       if (ETAG_DEBUG) {
-        console.error(`[ETag] 304 received but no cached data for ${cleanEndpoint}`);
+        console.error(`[ETag] 304 received but no cached data for ${endpoint}`);
       }
       // Clear the stale ETag to prevent this from happening again
       etagCache.delete(cacheKey);
       throw new ProjectServiceError(
-        `Cache miss on 304 response for ${cleanEndpoint}. Please retry the request.`,
+        `Cache miss on 304 response for ${endpoint}. Please retry the request.`,
         "CACHE_MISS",
         304,
       );
@@ -116,7 +117,7 @@ export async function callAPIWithETag<T = unknown>(endpoint: string, options: Re
       dataCache.set(cacheKey, result);
       if (ETAG_DEBUG) {
         console.log(
-          `%c[ETag] Cached new data for ${cleanEndpoint}`,
+          `%c[ETag] Cached new data for ${endpoint}`,
           "color: #3b82f6; font-weight: bold",
           `ETag: ${newEtag.substring(0, 12)}...`,
         );
@@ -153,15 +154,16 @@ export function clearETagCache(): void {
  * Useful after mutations that affect specific resources
  */
 export function invalidateETagCache(endpoint: string, method = "GET"): void {
-  const cleanEndpoint = endpoint.startsWith("/api") ? endpoint.substring(4) : endpoint;
-  const fullUrl = `${API_FULL_URL}/api${cleanEndpoint}`; // Updated to use API_FULL_URL
+  // `endpoint` is now expected to be the full, absolute URL
+  const fullUrl = endpoint;
   const normalizedMethod = method.toUpperCase();
   const cacheKey = `${normalizedMethod}:${fullUrl}`;
 
   etagCache.delete(cacheKey);
   dataCache.delete(cacheKey);
   if (ETAG_DEBUG) {
-    console.debug(`[ETag] Cache invalidated for ${cleanEndpoint}`);
+    // Changed cleanEndpoint to endpoint as it's now the full URL
+    console.debug(`[ETag] Cache invalidated for ${endpoint}`);
   }
 }
 

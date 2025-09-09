@@ -77,10 +77,10 @@ export async function retry<T>(fn: () => Promise<T>, retries = 3, delay = 500): 
 
 // Generic API request handler with error handling
 export async function apiRequest<T>(
-  endpoint: string,
+  endpoint: string, // Expects full URL
   options: RequestInit = {}
 ): Promise<T> {
-  const url = `${API_FULL_URL}/api${endpoint}`; // Updated to use API_FULL_URL and append /api
+  const url = endpoint; // Directly use the endpoint
   try {
     const response = await fetch(url, {
       headers: {
@@ -116,14 +116,14 @@ export async function apiRequest<T>(
 
 // Crawling Operations
 export async function crawlSinglePage(url: string): Promise<CrawlResponse> {
-  return retry(() => apiRequest<CrawlResponse>('/crawl/single', {
+  return retry(() => apiRequest<CrawlResponse>(`${API_FULL_URL}/api/crawl/single`, {
     method: 'POST',
     body: JSON.stringify({ url }),
   }));
 }
 
 export async function smartCrawlUrl(url: string, options: CrawlOptions = {}): Promise<CrawlResponse> {
-  return retry(() => apiRequest<CrawlResponse>('/crawl/smart', {
+  return retry(() => apiRequest<CrawlResponse>(`${API_FULL_URL}/api/crawl/smart`, {
     method: 'POST',
     body: JSON.stringify({ url, ...options }),
   }));
@@ -131,14 +131,14 @@ export async function smartCrawlUrl(url: string, options: CrawlOptions = {}): Pr
 
 // RAG Operations
 export async function performRAGQuery(query: string, options: RAGQueryOptions = {}): Promise<RAGQueryResponse> {
-  return retry(() => apiRequest<RAGQueryResponse>('/rag/query', {
+  return retry(() => apiRequest<RAGQueryResponse>(`${API_FULL_URL}/api/rag/query`, {
     method: 'POST',
     body: JSON.stringify({ query, ...options }),
   }));
 }
 
 export async function getAvailableSources(): Promise<SourcesResponse> {
-  return retry(() => apiRequest<SourcesResponse>('/rag/sources'));
+  return retry(() => apiRequest<SourcesResponse>(`${API_FULL_URL}/api/rag/sources`));
 }
 
 // Document Upload
@@ -151,7 +151,7 @@ export async function uploadDocument(file: File, options: UploadOptions = {}): P
   if (options.knowledge_type) {
     formData.append('knowledge_type', options.knowledge_type);
   }
-  return retry(() => apiRequest<UploadResponse>('/documents/upload', {
+  return retry(() => apiRequest<UploadResponse>(`${API_FULL_URL}/api/documents/upload`, {
     method: 'POST',
     body: formData,
     headers: {}, // Let browser set Content-Type for FormData
@@ -160,5 +160,5 @@ export async function uploadDocument(file: File, options: UploadOptions = {}): P
 
 // Database Metrics
 export async function getDatabaseMetrics(): Promise<DatabaseMetrics> {
-  return retry(() => apiRequest<DatabaseMetrics>('/database/metrics'));
+  return retry(() => apiRequest<DatabaseMetrics>(`${API_FULL_URL}/api/database/metrics`));
 }

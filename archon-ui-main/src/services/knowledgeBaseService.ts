@@ -76,10 +76,10 @@ import { API_FULL_URL } from '../config/api';
 
 // Helper function for API requests with timeout
 async function apiRequest<T>(
-  endpoint: string,
+  endpoint: string, // endpoint is now expected to be absolute URL
   options: RequestInit = {}
 ): Promise<T> {
-  const url = `${API_FULL_URL}/api${endpoint}`; // Updated to use API_FULL_URL and append /api
+  const url = endpoint; // Directly use the endpoint as it's expected to be a full URL
   console.log(`🔍 [KnowledgeBase] Starting API request to: ${url}`);
   console.log(`🔍 [KnowledgeBase] Request method: ${options.method || 'GET'}`);
   console.log(`🔍 [KnowledgeBase] API_FULL_URL: "${API_FULL_URL}"`);
@@ -155,7 +155,7 @@ class KnowledgeBaseService {
     console.log('📋 [KnowledgeBase] Query string:', queryString);
     console.log('📋 [KnowledgeBase] Full endpoint:', `/knowledge-items?${queryString}`);
     
-    const response = await apiRequest<KnowledgeItemsResponse>(`/knowledge-items?${params}`)
+    const response = await apiRequest<KnowledgeItemsResponse>(`${API_FULL_URL}/api/knowledge-items?${params}`)
     
     // Debug logging to inspect response
     console.log('📋 [KnowledgeBase] Response received:', response);
@@ -179,7 +179,7 @@ class KnowledgeBaseService {
    * Delete a knowledge item by source_id
    */
   async deleteKnowledgeItem(sourceId: string) {
-    return apiRequest(`/knowledge-items/${sourceId}`, {
+    return apiRequest(`${API_FULL_URL}/api/knowledge-items/${sourceId}`, {
       method: 'DELETE'
     })
   }
@@ -188,7 +188,7 @@ class KnowledgeBaseService {
    * Update knowledge item metadata
    */
   async updateKnowledgeItem(sourceId: string, updates: Partial<KnowledgeItemMetadata>) {
-    return apiRequest(`/knowledge-items/${sourceId}`, {
+    return apiRequest(`${API_FULL_URL}/api/knowledge-items/${sourceId}`, {
       method: 'PUT',
       body: JSON.stringify(updates)
     })
@@ -200,7 +200,7 @@ class KnowledgeBaseService {
   async refreshKnowledgeItem(sourceId: string) {
     console.log('🔄 [KnowledgeBase] Refreshing knowledge item:', sourceId);
     
-    return apiRequest(`/knowledge-items/${sourceId}/refresh`, {
+    return apiRequest(`${API_FULL_URL}/api/knowledge-items/${sourceId}/refresh`, {
       method: 'POST'
     })
   }
@@ -217,7 +217,7 @@ class KnowledgeBaseService {
     }
     
     const queryString = params.toString();
-    const endpoint = `/knowledge-items/${sourceId}/chunks${queryString ? `?${queryString}` : ''}`;
+    const endpoint = `${API_FULL_URL}/api/knowledge-items/${sourceId}/chunks${queryString ? `?${queryString}` : ''}`;
     
     return apiRequest<{
       success: boolean;
@@ -284,14 +284,14 @@ class KnowledgeBaseService {
    * Get detailed information about a knowledge item
    */
   async getKnowledgeItemDetails(sourceId: string) {
-    return apiRequest(`/knowledge-items/${sourceId}/details`)
+    return apiRequest(`${API_FULL_URL}/api/knowledge-items/${sourceId}/details`)
   }
 
   /**
    * Search across the knowledge base
    */
   async searchKnowledgeBase(query: string, options: SearchOptions = {}) {
-    return apiRequest('/knowledge-items/search', {
+    return apiRequest(`${API_FULL_URL}/api/knowledge-items/search`, {
       method: 'POST',
       body: JSON.stringify({
         query,
@@ -306,7 +306,7 @@ class KnowledgeBaseService {
   async stopCrawl(progressId: string) {
     console.log('🛑 [KnowledgeBase] Stopping crawl:', progressId);
     
-    return apiRequest(`/knowledge-items/stop/${progressId}`, {
+    return apiRequest(`${API_FULL_URL}/api/knowledge-items/stop/${progressId}`, {
       method: 'POST'
     });
   }
@@ -322,7 +322,7 @@ class KnowledgeBaseService {
       source_id: string
       code_examples: any[]
       count: number
-    }>(`/knowledge-items/${sourceId}/code-examples`);
+    }>(`${API_FULL_URL}/api/knowledge-items/${sourceId}/code-examples`);
   }
 
 }
