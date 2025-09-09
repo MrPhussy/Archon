@@ -57,7 +57,7 @@ export interface DatabaseMetrics {
   last_sync: string;
 }
 
-const API_BASE_URL = '/api';
+import { API_FULL_URL } from '../config/api';
 
 // Retry wrapper for transient errors
 export async function retry<T>(fn: () => Promise<T>, retries = 3, delay = 500): Promise<T> {
@@ -80,7 +80,7 @@ export async function apiRequest<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const url = `${API_BASE_URL}${endpoint}`;
+  const url = `${API_FULL_URL}/api${endpoint}`; // Updated to use API_FULL_URL and append /api
   try {
     const response = await fetch(url, {
       headers: {

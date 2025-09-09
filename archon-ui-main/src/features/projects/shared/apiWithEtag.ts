@@ -6,14 +6,14 @@
 import { ProjectServiceError } from "./api";
 
 // API configuration
-const API_BASE_URL = "/api";
+import { API_FULL_URL } from '../../../config/api';
 
 // ETag and data cache stores
 const etagCache = new Map<string, string>();
 const dataCache = new Map<string, unknown>();
 
 // Debug flag for console logging (only in dev or when VITE_SHOW_DEVTOOLS is enabled)
-const ETAG_DEBUG = import.meta.env?.DEV === true;
+const ETAG_DEBUG = (import.meta.env as any)?.DEV; // Cast to any to resolve TypeScript error
 
 // Generate cache key from endpoint and options
 function getCacheKey(endpoint: string, options: RequestInit = {}): string {
@@ -30,7 +30,7 @@ export async function callAPIWithETag<T = unknown>(endpoint: string, options: Re
   try {
     // Clean endpoint
     const cleanEndpoint = endpoint.startsWith("/api") ? endpoint.substring(4) : endpoint;
-    const fullUrl = `${API_BASE_URL}${cleanEndpoint}`;
+    const fullUrl = `${API_FULL_URL}/api${cleanEndpoint}`; // Corrected to use API_FULL_URL
     const cacheKey = getCacheKey(fullUrl, options);
     const method = (options.method || "GET").toUpperCase();
 
@@ -154,7 +154,7 @@ export function clearETagCache(): void {
  */
 export function invalidateETagCache(endpoint: string, method = "GET"): void {
   const cleanEndpoint = endpoint.startsWith("/api") ? endpoint.substring(4) : endpoint;
-  const fullUrl = `${API_BASE_URL}${cleanEndpoint}`;
+  const fullUrl = `${API_FULL_URL}/api${cleanEndpoint}`; // Updated to use API_FULL_URL
   const normalizedMethod = method.toUpperCase();
   const cacheKey = `${normalizedMethod}:${fullUrl}`;
 

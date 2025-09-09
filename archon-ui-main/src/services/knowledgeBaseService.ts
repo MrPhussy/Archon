@@ -71,7 +71,7 @@ export interface SearchOptions {
 }
 
 // Use relative URL to go through Vite proxy
-import { API_BASE_URL } from '../config/api';
+import { API_FULL_URL } from '../config/api';
 // const API_BASE_URL = '/api'; // Now imported from config
 
 // Helper function for API requests with timeout
@@ -79,10 +79,10 @@ async function apiRequest<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const url = `${API_BASE_URL}${endpoint}`;
+  const url = `${API_FULL_URL}/api${endpoint}`; // Updated to use API_FULL_URL and append /api
   console.log(`🔍 [KnowledgeBase] Starting API request to: ${url}`);
   console.log(`🔍 [KnowledgeBase] Request method: ${options.method || 'GET'}`);
-  console.log(`🔍 [KnowledgeBase] API_BASE_URL: "${API_BASE_URL}"`);
+  console.log(`🔍 [KnowledgeBase] API_FULL_URL: "${API_FULL_URL}"`);
   
   // Create an AbortController for timeout
   const controller = new AbortController();
@@ -249,7 +249,7 @@ class KnowledgeBaseService {
       formData.append('tags', JSON.stringify(metadata.tags))
     }
     
-    const response = await fetch(`${API_BASE_URL}/documents/upload`, {
+    const response = await fetch(`${API_FULL_URL}/api/documents/upload`, {
       method: 'POST',
       body: formData
     })
@@ -328,4 +328,4 @@ class KnowledgeBaseService {
 }
 
 // Export singleton instance
-export const knowledgeBaseService = new KnowledgeBaseService() 
+export const knowledgeBaseService = new KnowledgeBaseService()
