@@ -1,4 +1,4 @@
-import { API_FULL_URL } from '../../../config/api';
+import { API_FULL_URL, MCP_FULL_URL } from '../../../config/api';
 import { callAPIWithETag } from "../../projects/shared/apiWithEtag";
 import type {
   McpServerStatus,
@@ -11,7 +11,7 @@ export const mcpApi = {
   async getStatus(): Promise<McpServerStatus> {
     try {
       const response =
-        await callAPIWithETag<McpServerStatus>(`${API_FULL_URL}/api/mcp/status`);
+        await callAPIWithETag<McpServerStatus>(`${MCP_FULL_URL}/mcp/status`);
       return response;
     } catch (error) {
       console.error("Failed to get MCP status:", error);
@@ -22,7 +22,7 @@ export const mcpApi = {
   async getConfig(): Promise<McpServerConfig> {
     try {
       const response =
-        await callAPIWithETag<McpServerConfig>(`${API_FULL_URL}/api/mcp/config`);
+        await callAPIWithETag<McpServerConfig>(`${MCP_FULL_URL}/mcp/config`);
       return response;
     } catch (error) {
       console.error("Failed to get MCP config:", error);
@@ -33,7 +33,7 @@ export const mcpApi = {
   async getSessionInfo(): Promise<McpSessionInfo> {
     try {
       const response =
-        await callAPIWithETag<McpSessionInfo>(`${API_FULL_URL}/api/mcp/sessions`);
+        await callAPIWithETag<McpSessionInfo>(`${MCP_FULL_URL}/mcp/sessions`);
       return response;
     } catch (error) {
       console.error("Failed to get session info:", error);
@@ -44,7 +44,7 @@ export const mcpApi = {
   async getClients(): Promise<McpClient[]> {
     try {
       const response = await callAPIWithETag<{ clients: McpClient[] }>(
-        `${API_FULL_URL}/api/mcp/clients`,
+        `${MCP_FULL_URL}/mcp/clients`,
       );
       return response.clients || [];
     } catch (error) {

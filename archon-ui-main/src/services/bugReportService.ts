@@ -4,7 +4,7 @@
  * Handles automatic context collection and GitHub issue creation for bug reports.
  */
 
-import { API_FULL_URL, getApiUrl } from '../config/api';
+import { API_FULL_URL, getApiUrl, MCP_FULL_URL } from '../config/api';
 
 export interface BugContext {
   error: {
@@ -115,7 +115,7 @@ try {
       // Check services with a short timeout
       const checks = await Promise.allSettled([
         fetch(`${API_FULL_URL}/api/health`, { signal: AbortSignal.timeout(2000) }),
-        fetch(`${API_FULL_URL}/api/mcp/health`, { signal: AbortSignal.timeout(2000) }),
+        fetch(`${MCP_FULL_URL}/mcp/health`, { signal: AbortSignal.timeout(2000) }), // Correct path for MCP
         fetch(`${API_FULL_URL}/api/agents/health`, { signal: AbortSignal.timeout(2000) })
       ]);
 
