@@ -4,7 +4,7 @@
  */
 
 // API configuration - use relative URL to go through Vite proxy
-const API_BASE_URL = "/api";
+import { API_FULL_URL } from '../../../config/api';
 
 // Error classes
 export class ProjectServiceError extends Error {
@@ -63,9 +63,9 @@ export function formatZodErrors(zodError: { issues: Array<{ path: (string | numb
 // Helper function to call FastAPI endpoints directly
 export async function callAPI<T = unknown>(endpoint: string, options: RequestInit = {}): Promise<T> {
   try {
-    // Remove /api prefix if it exists since API_BASE_URL already includes it
+    // Remove /api prefix if it exists since API_FULL_URL already includes it
     const cleanEndpoint = endpoint.startsWith("/api") ? endpoint.substring(4) : endpoint;
-    const response = await fetch(`${API_BASE_URL}${cleanEndpoint}`, {
+    const response = await fetch(`${API_FULL_URL}/api${cleanEndpoint}`, { // Ensured /api path is included
       headers: {
         "Content-Type": "application/json",
         ...options.headers,

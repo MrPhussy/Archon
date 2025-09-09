@@ -4,7 +4,7 @@
  * Handles automatic context collection and GitHub issue creation for bug reports.
  */
 
-import { getApiUrl } from '../config/api';
+import { API_FULL_URL, getApiUrl } from '../config/api';
 
 export interface BugContext {
   error: {
@@ -77,9 +77,9 @@ class BugReportService {
    * Get the current Archon version
    */
   private async getVersion(): Promise<string> {
-    try {
+try {
       // Try to get version from main health endpoint
-      const response = await fetch('/api/system/version');
+      const response = await fetch(`${API_FULL_URL}/api/system/version`);
       if (response.ok) {
         const data = await response.json();
         return data.version || 'v0.1.0';
@@ -114,9 +114,9 @@ class BugReportService {
     try {
       // Check services with a short timeout
       const checks = await Promise.allSettled([
-        fetch('/api/health', { signal: AbortSignal.timeout(2000) }),
-        fetch('/api/mcp/health', { signal: AbortSignal.timeout(2000) }),
-        fetch('/api/agents/health', { signal: AbortSignal.timeout(2000) })
+        fetch(`${API_FULL_URL}/api/health`, { signal: AbortSignal.timeout(2000) }),
+        fetch(`${API_FULL_URL}/api/mcp/health`, { signal: AbortSignal.timeout(2000) }),
+        fetch(`${API_FULL_URL}/api/agents/health`, { signal: AbortSignal.timeout(2000) })
       ]);
 
       services.server = checks[0].status === 'fulfilled' && (checks[0].value as Response).ok;
