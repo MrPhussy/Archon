@@ -46,4 +46,4 @@ export function getApiBasePath(): string {
 // Export commonly used values
 export const API_FULL_URL = getApiUrl();
 export const MCP_FULL_URL = import.meta.env.VITE_MCP_API_URL || API_FULL_URL; // Fallback to API_FULL_URL if not set
-export const API_BASE_URL = API_FULL_URL;
+export const API_BASE_URL = '/api'; // Changed back to relative path '/api'
