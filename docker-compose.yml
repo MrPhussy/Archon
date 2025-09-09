@@ -145,7 +145,7 @@ services:
     ports:
       - "${ARCHON_UI_PORT:-3737}:3000"
     environment:
-      - VITE_API_URL=http://${HOST:-localhost}:${ARCHON_SERVER_PORT:-8181}
+      - VITE_API_URL=http://archon-server:${ARCHON_SERVER_PORT:-8181}
       - VITE_ARCHON_SERVER_PORT=${ARCHON_SERVER_PORT:-8181}
       - ARCHON_SERVER_PORT=${ARCHON_SERVER_PORT:-8181}
       - HOST=${HOST:-localhost}
